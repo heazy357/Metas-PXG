@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projetos TM Hzy</title>
+<style>
+:root{
+  --bg:#090c12;--panel:#111722;--panel2:#171f2c;--line:#4c88aa;--line2:#294b60;
+  --text:#edf6fa;--muted:#9bb5c4;--accent:#79b7d7;--done:#63d39a;--danger:#e87979
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,#193244 0,transparent 38%),var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+header{text-align:center;padding:26px 14px 17px}
+h1{margin:0;font-size:clamp(25px,5.2vw,44px);font-style:italic;letter-spacing:2px;color:var(--accent)}
+h1::after{content:"";display:block;width:min(620px,78vw);height:1px;margin:13px auto 0;background:var(--line);opacity:.58;box-shadow:0 0 7px #4c88aa55}
+.toolbar{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin:14px auto 0}
+.toolbar button,.primary,.modal button,.inline-add{border:1px solid var(--line);background:#101721;color:var(--accent);padding:9px 13px;border-radius:6px;font-weight:700;cursor:pointer;transition:.16s ease}
+.toolbar button:hover,.primary:hover,.modal button:hover,.inline-add:hover{background:#182534}
+.save-status{width:100%;margin-top:2px;color:var(--muted);font:11px Arial,sans-serif;opacity:.88}.save-status.saved{color:var(--done)}
+main{width:min(1500px,calc(100% - 26px));margin:auto;padding:8px 0 45px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{--tab:#4c88aa;background:linear-gradient(180deg,#111824,#0e131c);border:2px solid var(--tab);box-shadow:0 0 14px color-mix(in srgb,var(--tab) 58%,transparent),inset 0 0 18px #0a1018;border-radius:5px;overflow:hidden;position:relative;min-width:0;padding-bottom:42px}
+.card.completed{box-shadow:0 0 18px color-mix(in srgb,var(--tab) 68%,transparent),0 0 0 1px var(--done),inset 0 0 18px #0a1812}
+.card-tools{position:absolute;z-index:4;right:7px;top:7px;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
+.card-tools .tiny{min-width:29px;height:29px;background:color-mix(in srgb,var(--tab) 10%,#080d14dd);border:1px solid var(--tab);color:var(--tab);padding:3px 6px;border-radius:5px;box-shadow:0 0 7px color-mix(in srgb,var(--tab) 18%,transparent);cursor:pointer;font:700 14px Arial,sans-serif}
+.card-tools .tiny:hover{background:color-mix(in srgb,var(--tab) 21%,#080d14);box-shadow:0 0 11px color-mix(in srgb,var(--tab) 34%,transparent)}
+.card-tools .tiny:disabled{opacity:.28;cursor:default;box-shadow:none}
+.type-badge{position:absolute;z-index:3;left:9px;top:9px;padding:4px 8px;border:1px solid color-mix(in srgb,var(--tab) 70%,transparent);border-radius:999px;background:#08101acc;color:var(--tab);font:700 10px Arial,sans-serif;letter-spacing:.8px;text-transform:uppercase}
+.hero{height:255px;display:flex;align-items:center;justify-content:center;padding:10px;background:radial-gradient(circle,color-mix(in srgb,var(--tab) 31%,#172431) 0,#111824 58%,#0e131c 100%);position:relative}
+.hero img{width:auto;height:min(58%,145px);max-width:88%;max-height:72%;object-fit:contain;filter:drop-shadow(0 10px 18px #000b) drop-shadow(0 0 24px color-mix(in srgb,var(--tab) 30%,transparent));transform:scale(1)}
+.hero.no-image{height:96px}.hero.compact{height:160px}.hero img.broken{display:none}.image-error{display:none;text-align:center;color:#8da6b4;font:12px Arial,sans-serif}.image-placeholder{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border:1px dashed color-mix(in srgb,var(--tab) 60%,#587080);border-radius:50%;color:#7793a3;font:11px Arial,sans-serif;opacity:.72}
+.hero-done-check{position:absolute;left:50%;top:14px;transform:translateX(-50%);z-index:3;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#10251ced;border:2px solid var(--done);color:var(--done);font:900 24px/1 Arial,sans-serif;box-shadow:0 0 16px #63d39a88}
+.name-row{border-top:2px solid var(--tab);border-bottom:2px solid var(--tab);background:#111a24;display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 48px 8px 12px;min-height:52px}
+.tab-name{margin:0;text-align:center;font-size:clamp(19px,2.2vw,28px);font-weight:700;font-style:italic;color:var(--tab);text-shadow:0 0 12px color-mix(in srgb,var(--tab) 35%,transparent);cursor:pointer;overflow-wrap:anywhere}
+.rename-pencil{border:0;background:transparent;color:var(--tab);padding:3px;cursor:pointer;font-size:13px;opacity:.7}.rename-pencil:hover{opacity:1}
+.inline-name-input{min-width:120px;width:min(420px,100%);padding:6px 9px;text-align:center;background:#0b121b;border:1px solid var(--tab);border-radius:4px;color:var(--text);outline:none;font-weight:700}
+.card-details{padding:8px 12px;border-bottom:1px solid var(--line2);color:var(--muted);font:12px/1.45 Arial,sans-serif;text-align:center;white-space:pre-wrap}
+.simple-goal{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:15px 12px;border-bottom:2px solid var(--tab);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--tab) 7%,transparent),transparent)}
+.simple-goal-label{color:var(--muted);font:11px Arial,sans-serif;text-transform:uppercase;letter-spacing:.7px}
+.simple-goal .progress input{width:64px}.simple-goal.goal-done{background:linear-gradient(90deg,transparent,#63d39a12,transparent)}
+.topic-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.topic-picker button{min-height:48px}
+.categories{display:grid;grid-template-columns:repeat(var(--topic-count,3),minmax(0,1fr));justify-content:center}
+.category{min-width:0;border-right:2px solid var(--tab);position:relative}.category:last-child{border-right:0}
+.cat-title{min-height:70px;padding:7px 46px 7px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:clamp(12px,1.25vw,17px);font-weight:700;color:var(--tab);text-transform:uppercase;line-height:1.08;border-bottom:2px solid var(--tab);position:relative}
+.topic-images{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;max-width:calc(100% - 12px)}.topic-images img{width:28px;height:28px;object-fit:contain;opacity:.82;filter:drop-shadow(0 2px 4px #0008)}
+.topic-title-text{overflow-wrap:anywhere}.topic-tools{position:absolute;right:6px;top:6px;display:flex;gap:3px}
+.topic-tools button{width:27px;height:27px;padding:0;border:1px solid color-mix(in srgb,var(--tab) 75%,transparent);border-radius:5px;background:color-mix(in srgb,var(--tab) 8%,#09111a);color:var(--tab);cursor:pointer;font:700 15px Arial,sans-serif}.topic-tools button:hover{background:color-mix(in srgb,var(--tab) 20%,#09111a)}
+.topic-details{padding:6px 8px;border-bottom:1px solid var(--line2);color:#8099a7;font:11px/1.35 Arial,sans-serif;text-align:center;white-space:pre-wrap}
+.item{min-height:82px;padding:9px 7px;border-bottom:1px solid var(--line2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;position:relative}.item:last-child{border-bottom:0}
+.item-name{font-size:12px;color:var(--muted);text-align:center;font-family:Arial,sans-serif;padding:0 23px;overflow-wrap:anywhere}.item-detail{font:10px/1.25 Arial,sans-serif;color:#6f8795;text-align:center;padding:0 20px;white-space:pre-wrap}
+.progress{display:flex;align-items:center;justify-content:center;gap:3px}.progress input{width:52px;text-align:right;background:transparent;border:0;border-bottom:1px solid var(--line);outline:none;color:var(--accent);font:700 20px Arial,sans-serif;padding:2px}.progress span{font:700 20px Arial,sans-serif;color:var(--accent)}.max-input{width:48px!important;text-align:left!important}.fixed-max{min-width:28px;text-align:left}
+.shared-total{padding:5px 7px 6px;border-bottom:1px solid var(--line2);text-align:center;color:#8fa9b7;font:11px Arial,sans-serif}.shared-total strong{color:var(--accent)}
+.item-tools{position:absolute;right:5px;top:5px;display:flex;gap:2px}.item-edit,.remove-x{width:20px;height:20px;padding:0;border:0!important;background:transparent!important;font:700 14px/20px Arial,sans-serif!important;cursor:pointer;border-radius:50%;opacity:.72}.item-edit{color:var(--tab)!important}.remove-x{color:#6f8795!important;font-size:17px!important}.item-edit:hover{background:color-mix(in srgb,var(--tab) 12%,transparent)!important;opacity:1}.remove-x:hover{color:var(--danger)!important;background:#e8797912!important;opacity:1}
+.goal-check{position:absolute;right:7px;bottom:6px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#10251c;border:1px solid var(--done);color:var(--done);font:900 15px/1 Arial,sans-serif;box-shadow:0 0 9px #63d39a55;opacity:0;transform:scale(.72);transition:.16s ease;pointer-events:none}.goal-check.show{opacity:1;transform:scale(1)}.item.goal-done{background:linear-gradient(90deg,transparent,#63d39a0a,transparent)}
+.card-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:10px 10px 0;background:#0f151f;border-top:2px solid var(--tab)}
+.card-actions .inline-add{border-color:var(--tab);color:var(--tab);background:color-mix(in srgb,var(--tab) 7%,#0b111a)}
+.card-complete-check{min-width:29px;height:29px;padding:0;border:1px solid var(--tab);border-radius:5px;background:color-mix(in srgb,var(--tab) 10%,#080d14dd);color:var(--tab);font:900 17px/1 Arial,sans-serif;cursor:pointer;opacity:.72;transition:.16s ease;box-shadow:0 0 7px color-mix(in srgb,var(--tab) 18%,transparent)}.card-complete-check:hover{opacity:1;background:color-mix(in srgb,var(--tab) 21%,#080d14);box-shadow:0 0 11px color-mix(in srgb,var(--tab) 34%,transparent)}.card.completed .card-complete-check{color:var(--done);border-color:var(--done);opacity:1;background:#10251ce8;box-shadow:0 0 9px #63d39a66}
+.empty{padding:12px;text-align:center;color:#6f8795;font:12px Arial,sans-serif}.empty-topics{padding:18px;text-align:center;color:#6f8795;font:12px Arial,sans-serif;border-bottom:1px solid var(--line2)}
+.welcome{grid-column:1/-1;text-align:center;padding:70px 20px;border:2px dashed var(--line);background:#101720;border-radius:6px}.welcome-icon{font:44px Arial;color:var(--accent)}.welcome h2{margin:10px 0 6px;color:var(--accent)}.welcome p{margin:0 auto 18px;color:var(--muted);font:14px Arial,sans-serif;max-width:600px}
+.modal-back{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:14px;z-index:20}.modal-back.open{display:flex}
+.modal{width:min(520px,100%);max-height:92vh;overflow:auto;background:#121a25;border:2px solid var(--line);padding:20px;border-radius:7px;box-shadow:0 15px 50px #000}.modal.wide{width:min(820px,100%)}
+.modal h3{margin:0 0 14px;color:var(--accent)}.modal label{display:block;font:13px Arial,sans-serif;color:var(--muted);margin:10px 0 5px}.modal input,.modal select,.modal textarea{width:100%;padding:10px;background:#0c121b;border:1px solid var(--line2);color:var(--text);border-radius:4px;outline:none}.modal textarea{resize:vertical;min-height:76px}.modal small{display:block;margin-top:6px;color:#718997;font:11px Arial,sans-serif}.modal-note{margin:-5px 0 12px;color:var(--muted);font:12px Arial,sans-serif}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}.danger{color:var(--danger)!important;border-color:#8d5050!important}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kind-choice{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kind-choice button{padding:11px 7px}.kind-choice button.active{background:#1a3140;border-color:var(--accent);box-shadow:0 0 10px #4c88aa44}
+.pokemon-presets{margin-top:14px;padding:12px;border:1px solid var(--line2);border-radius:6px;background:#0d141d}.pokemon-presets h4{margin:0 0 8px;color:var(--accent);font:700 13px Arial,sans-serif}.preset-buttons{display:flex;gap:6px;flex-wrap:wrap}.preset-buttons button{padding:7px 9px;font-size:12px}.draft-topics{display:flex;flex-direction:column;gap:7px;margin-top:10px}.draft-topic{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 9px;border:1px solid #263d4d;border-radius:5px;color:var(--muted);font:12px Arial,sans-serif}.draft-topic strong{color:var(--text)}.draft-topic button{padding:3px 7px!important;color:var(--danger)!important}
+.topic-config-grid{display:grid;grid-template-columns:1.2fr .9fr;gap:10px}.topic-mode-note{padding:9px 10px;border:1px solid var(--line2);background:#0c131c;border-radius:5px;color:#7f99a7;font:11px/1.4 Arial,sans-serif;margin-top:8px}
+.reorder-tip{color:#78919f;font:11px Arial,sans-serif;text-align:center;margin:6px 0 0}
+@media(max-width:1180px){.categories{grid-template-columns:repeat(2,minmax(0,1fr));justify-content:center}.category{border-right:0;border-bottom:2px solid var(--tab)}.category:nth-child(odd){border-right:2px solid var(--tab)}.category:last-child{border-bottom:0}.category:last-child:nth-child(odd){grid-column:1/-1;max-width:min(470px,100%);width:100%;justify-self:center;border-right:0}}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.hero{height:clamp(220px,48vw,255px)}.hero img{height:min(58%,140px);max-height:70%;max-width:88%}}
+@media(max-width:650px){
+  header{padding:19px 9px 13px}.toolbar{gap:6px}.toolbar button{padding:8px 10px;font-size:12px}.save-status{font-size:10px}
+  main{width:calc(100% - 14px);padding-bottom:25px}.grid{gap:12px}.card-tools{right:5px;top:5px;gap:3px;max-width:72%}.card-tools .tiny{min-width:27px;height:27px;padding:2px 5px}.type-badge{left:6px;top:6px;font-size:9px}
+  .hero{height:clamp(185px,58vw,225px);padding:7px}.hero img{height:min(58%,125px);max-height:70%;max-width:86%;transform:scale(1)}.hero.no-image{height:92px}.hero.compact{height:138px}.name-row{padding-right:10px;padding-left:10px}.tab-name{font-size:21px}
+  .categories{grid-template-columns:1fr}.category,.category:nth-child(odd){border-right:0;border-bottom:2px solid var(--tab)}.category:last-child{border-bottom:0}.cat-title{min-height:64px;font-size:14px;padding-right:48px}
+  .item{min-height:75px}.modal-back{padding:8px}.modal{padding:15px;max-height:95vh}.modal-actions{justify-content:stretch}.modal-actions button{flex:1}.two-col,.topic-config-grid{grid-template-columns:1fr}.kind-choice{grid-template-columns:1fr 1fr 1fr;gap:5px}.kind-choice button{font-size:12px;padding:10px 4px}
+}
+@media(max-width:390px){.toolbar button{width:100%;max-width:330px}.kind-choice{grid-template-columns:1fr}.card-tools{max-width:78%}.tab-name{font-size:19px}.progress input,.progress span{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Projetos TM Hzy</h1>
+  <div class="toolbar">
+    <button id="addGoalBtn">＋ Adicionar Pokémon/Meta/Item</button>
+    <button id="saveHtmlBtn">💾 Salvar arquivo atualizado</button>
+    <button id="resetBtn">↺ Restaurar dados</button>
+    <button id="exportBtn">Exportar progresso</button>
+    <button id="importBtn">Importar progresso</button>
+    <input id="importFile" type="file" accept="application/json" hidden>
+    <div class="save-status saved" id="saveStatus">Alterações salvas automaticamente neste navegador.</div>
+  </div>
+</header>
+<main><section class="grid" id="grid"></section></main>
+
+<!-- Criar uma nova aba -->
+<div class="modal-back" id="createModal"><div class="modal wide">
+  <h3>Adicionar Pokémon/Meta/Item</h3>
+  <label>Tipo de objetivo</label>
+  <div class="kind-choice" id="kindChoice">
+    <button type="button" data-kind="pokemon" class="active">Pokémon</button>
+    <button type="button" data-kind="meta">Meta</button>
+    <button type="button" data-kind="item">Item</button>
+  </div>
+  <input id="createKind" type="hidden" value="pokemon">
+  <div class="two-col">
+    <div><label>Nome da aba</label><input id="createName" placeholder="Ex.: Alolan Ninetales"></div>
+    <div><label>Cor da aba</label><input id="createColor" type="color" value="#4c88aa"></div>
+  </div>
+  <label>URL da imagem (opcional)</label><input id="createImage" type="url" placeholder="https://.../imagem.png">
+  <label>Detalhes (opcional)</label><textarea id="createDetails" placeholder="Informações, observações ou objetivo desta aba..."></textarea>
+  <div id="simpleGoalCreate" style="display:none">
+    <label>Meta do objetivo</label><input id="createGoalMax" type="number" min="1" value="1">
+    <small>Para Meta ou Item, o progresso fica diretamente na própria aba.</small>
+  </div>
+
+  <div class="pokemon-presets" id="pokemonPresetArea">
+    <h4>Tópicos iniciais do Pokémon</h4>
+    <small>Essas opções aparecem somente ao criar um Pokémon. Depois você pode adicionar, remover, renomear e detalhar cada tópico.</small>
+    <div class="preset-buttons">
+      <button type="button" data-preset="discos">＋ Discos</button>
+      <button type="button" data-preset="pink">＋ Pink Star</button>
+      <button type="button" data-preset="materias">＋ Matérias</button>
+      <button type="button" data-preset="custom">＋ Tópico livre</button>
+    </div>
+    <div class="draft-topics" id="createTopicDraft"></div>
+  </div>
+  <div class="modal-actions"><button id="createCancel">Cancelar</button><button id="createSave">Criar aba</button></div>
+</div></div>
+
+<!-- Ajustes gerais da aba -->
+<div class="modal-back" id="cardModal"><div class="modal">
+  <h3 id="cardModalTitle">Ajustes da aba</h3>
+  <div class="two-col">
+    <div><label>Tipo</label><select id="cardKind"><option value="pokemon">Pokémon</option><option value="meta">Meta</option><option value="item">Item</option></select></div>
+    <div><label>Cor da aba</label><input id="cardColor" type="color" value="#4c88aa"></div>
+  </div>
+  <label>Nome</label><input id="cardName">
+  <label>URL da imagem (opcional)</label><input id="cardImage" type="url" placeholder="https://.../imagem.png">
+  <label>Detalhes</label><textarea id="cardDetails" placeholder="Adicione informações ou observações..."></textarea>
+  <div id="simpleGoalEdit" style="display:none">
+    <label>Meta do objetivo</label><input id="cardGoalMax" type="number" min="1" value="1">
+  </div>
+  <div class="modal-actions"><button id="cardCancel">Cancelar</button><button id="cardSave">Salvar ajustes</button></div>
+</div></div>
+
+<!-- Escolher tipo de tópico -->
+<div class="modal-back" id="topicPickerModal"><div class="modal">
+  <h3>Adicionar tópico</h3>
+  <div class="modal-note">Escolha uma regra pronta ou crie um tópico livre. Essas opções aparecem somente em Pokémon.</div>
+  <div class="topic-picker">
+    <button type="button" data-topic-preset-choice="discos">/10</button>
+    <button type="button" data-topic-preset-choice="pink">Pink Star</button>
+    <button type="button" data-topic-preset-choice="materias">/50 compartilhado</button>
+    <button type="button" data-topic-preset-choice="custom">Tópico livre</button>
+  </div>
+  <div class="modal-actions"><button id="topicPickerCancel">Cancelar</button></div>
+</div></div>
+
+<!-- Criar/editar tópico -->
+<div class="modal-back" id="topicModal"><div class="modal">
+  <h3 id="topicModalTitle">Editar tópico</h3>
+  <label>Nome do tópico (opcional)</label><input id="topicName" placeholder="Ex.: DISCOS">
+  <label>Detalhes do tópico (opcional)</label><textarea id="topicDetails" placeholder="Ex.: TMs necessárias, observações, regras..."></textarea>
+  <label>Imagens do tópico (opcional)</label><textarea id="topicImages" placeholder="Cole uma URL por linha.
+Ex.:
+https://.../icone1.png
+https://.../icone2.png"></textarea><small>Você pode usar várias imagens; elas aparecem lado a lado no tópico.</small>
+  <div id="pokemonTopicModeArea">
+    <label>Regra do tópico</label>
+    <select id="topicMode">
+      <option value="custom">Meta individual</option>
+      <option value="fixed10">/10</option>
+      <option value="shared50">/50 compartilhado</option>
+    </select>
+    <div class="topic-mode-note">Em <b>/10</b>, cada item termina em 10. Em <b>/50 compartilhado</b>, todos os itens dividem a mesma necessidade total de 50. Em <b>Meta individual</b>, você escolhe a meta de cada item.</div>
+  </div>
+  <div class="modal-actions"><button id="topicDelete" class="danger">Excluir tópico</button><button id="topicCancel">Cancelar</button><button id="topicSave">Salvar tópico</button></div>
+</div></div>
+
+<!-- Criar item dentro de um tópico -->
+<div class="modal-back" id="itemModal"><div class="modal">
+  <h3 id="itemModalTitle">Adicionar item</h3>
+  <label>Nome do item (opcional)</label><input id="itemName" placeholder="Ex.: TM 24 / Matéria Psíquica / Objetivo">
+  <label>Detalhes (opcional)</label><textarea id="itemDetails" placeholder="Observação sobre este item..."></textarea>
+  <div id="itemGoalRow"><label>Meta</label><input id="itemGoal" type="number" min="1" value="10"></div>
+  <small id="itemRule"></small>
+  <div class="modal-actions"><button id="itemCancel">Cancelar</button><button id="itemSave">Salvar item</button></div>
+</div></div>
+
+<script id="embeddedState" type="application/json">[]</script>
+<script>
+const KEY='metas-hzy-v4';
+const LEGACY_KEYS=['wingeon-tracker-v3','metas-hzy-v3'];
+const PRESETS={
+  discos:{name:'DISCOS',image:'',details:'',mode:'fixed10',items:[{name:'Discos',details:'',value:0,max:10}]},
+  pink:{name:'PINK STAR',image:'',details:'',mode:'custom',items:[{name:'Pink Star',details:'',value:0,max:10}]},
+  materias:{name:'MATÉRIAS',image:'',details:'',mode:'shared50',items:[{name:'Matéria',details:'',value:0,max:50}]},
+  custom:{name:'NOVO TÓPICO',image:'',details:'',mode:'custom',items:[]}
+};
+let state=load();
+let createKind='pokemon',createTopics=[];
+let editingCard=null;
+let editingTopicCard=null,editingTopicId=null;
+let topicPickerCard=null;
+let addingItemCard=null,addingItemTopic=null,editingItemIndex=null;
+
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function uid(prefix='id'){return prefix+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function safeColor(c){return /^#[0-9a-f]{6}$/i.test(String(c||''))?String(c):'#4c88aa'}
+function normalizeTopicImages(t){const arr=Array.isArray(t?.images)?t.images:(t?.image?[t.image]:[]);return [...new Set(arr.map(x=>String(x||'').trim()).filter(Boolean))]}
+function topicImagesFromText(v){return [...new Set(String(v||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean))]}
+function kindLabel(k){return k==='meta'?'Meta':k==='item'?'Item':'Pokémon'}
+function normalizeItem(it,mode='custom'){
+  const hasItemName=it&&Object.prototype.hasOwnProperty.call(it,'name');const o={id:it?.id||uid('item'),name:hasItemName?String(it?.name??''):'',details:String(it?.details||''),value:Math.max(0,+it?.value||0),max:Math.max(1,+it?.max||10)};
+  if(mode==='fixed10'){o.max=10;o.value=Math.min(10,o.value)}
+  if(mode==='shared50'){o.max=50;o.value=Math.min(50,o.value)}
+  return o;
+}
+function normalizeTopic(t,i=0,kind='pokemon'){
+  let mode=['custom','fixed10','shared50'].includes(t?.mode)?t.mode:'custom';
+  if(kind!=='pokemon')mode='custom';
+  const hasTopicName=t&&Object.prototype.hasOwnProperty.call(t,'name');const images=normalizeTopicImages(t);const o={id:t?.id||uid('topic'),name:hasTopicName?String(t?.name??''):'',images,image:images[0]||'',details:String(t?.details||''),mode,items:[]};
+  o.items=Array.isArray(t?.items)?t.items.map(it=>normalizeItem(it,mode)):[];
+  normalizeSharedTopic(o);return o;
+}
+function normalizeCard(p,i=0){
+  if(!p||typeof p!=='object')return null;
+  const kind=['pokemon','meta','item'].includes(p.kind)?p.kind:'pokemon';
+  let topics=[];
+  if(Array.isArray(p.topics))topics=p.topics.map((t,j)=>normalizeTopic(t,j,kind));
+  else if(p.topics&&typeof p.topics==='object'){
+    const old=p.topics,oldItems=p.items||{};
+    topics=[
+      {id:'discos',name:old.discos?.name||'DISCOS',image:old.discos?.image||'',mode:'fixed10',items:oldItems.discos||[{name:'Discos',value:0,max:10}]},
+      {id:'pink',name:old.pink?.name||'PINK STAR',image:old.pink?.image||'',mode:'custom',items:oldItems.pink||[{name:'Pink Star',value:0,max:10}]},
+      {id:'materias',name:old.mastered?.name||'MATÉRIAS',image:old.mastered?.image||'',mode:'shared50',items:oldItems.mastered||[{name:'Matéria',value:0,max:50}]}
+    ].map((t,j)=>normalizeTopic(t,j,'pokemon'));
+  }
+  if(kind!=='pokemon')topics=[];
+  const value=Math.max(0,+p.value||0),max=Math.max(1,+p.max||1);
+  return {id:p.id||uid('tab'),kind,name:String(p.name||`${kindLabel(kind)} ${i+1}`),image:String(p.image||''),details:String(p.details||''),color:safeColor(p.color),completed:!!p.completed,value:Math.min(value,max),max,topics};
+}
+function embeddedInitial(){try{const x=JSON.parse(document.getElementById('embeddedState')?.textContent||'[]');if(Array.isArray(x))return x.map(normalizeCard).filter(Boolean)}catch(e){}return []}
+function load(){
+  try{const raw=localStorage.getItem(KEY);if(raw){const x=JSON.parse(raw);if(Array.isArray(x))return x.map(normalizeCard).filter(Boolean)}}catch(e){}
+  for(const k of LEGACY_KEYS){try{const raw=localStorage.getItem(k);if(raw){const x=JSON.parse(raw);if(Array.isArray(x))return x.map(normalizeCard).filter(Boolean)}}catch(e){}}
+  return embeddedInitial();
+}
+function setSaveStatus(text='Alterações salvas automaticamente neste navegador.',ok=true){const el=document.getElementById('saveStatus');if(!el)return;el.textContent=text;el.classList.toggle('saved',!!ok)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));setSaveStatus()}catch(e){setSaveStatus('Não foi possível salvar automaticamente neste navegador.',false)}}
+function topicById(card,id){return card?.topics?.find(t=>t.id===id)}
+function normalizeSharedTopic(topic){if(topic?.mode!=='shared50')return;let left=50;topic.items.forEach(it=>{it.value=Math.min(Math.max(0,+it.value||0),left);it.max=50;left-=it.value})}
+function sharedTotal(topic){return topic.items.reduce((s,it)=>s+Math.max(0,+it.value||0),0)}
+function sharedAllowedMax(topic,index){const others=topic.items.reduce((s,it,i)=>s+(i===index?0:Math.max(0,+it.value||0)),0);return Math.max(0,50-others)}
+function goalTarget(topic,index){const it=topic.items[index];if(!it)return 0;if(topic.mode==='fixed10')return 10;if(topic.mode==='shared50')return sharedAllowedMax(topic,index);return Math.max(1,+it.max||1)}
+function goalDone(topic,index){const it=topic.items[index],target=goalTarget(topic,index);return !!it&&target>0&&(+it.value||0)>=target}
+
+function renderItem(card,topic,ci,ii){
+  const it=topic.items[ii],target=goalTarget(topic,ii),done=goalDone(topic,ii);
+  const maxPart=topic.mode==='custom'?`<input class="max-input" data-max="${ci}" data-topic="${esc(topic.id)}" data-i="${ii}" type="number" min="1" value="${Math.max(1,+it.max||1)}">`:`<span class="fixed-max">${target}</span>`;
+  const itemName=it.name?`<div class="item-name">${esc(it.name)}</div>`:'';
+  return `<div class="item${done?' goal-done':''}">
+    <div class="item-tools"><button class="item-edit" data-edit-item="${ci}" data-topic="${esc(topic.id)}" data-i="${ii}" title="Editar item">✎</button><button class="remove-x" data-remove-item="${ci}" data-topic="${esc(topic.id)}" data-i="${ii}" title="Remover item">×</button></div>
+    ${itemName}${it.details?`<div class="item-detail">${esc(it.details)}</div>`:''}
+    <div class="progress"><input data-value="${ci}" data-topic="${esc(topic.id)}" data-i="${ii}" type="number" min="0" value="${Math.max(0,+it.value||0)}"><span>/</span>${maxPart}</div>
+    <div class="goal-check${done?' show':''}">✓</div>
+  </div>`;
+}
+function render(){
+  const grid=document.getElementById('grid');grid.innerHTML='';
+  if(!state.length){grid.innerHTML=`<div class="welcome"><div class="welcome-icon">＋</div><h2>Nenhuma aba criada</h2><p>Crie um Pokémon, uma Meta ou um Item. Em Pokémon você também pode começar com os tópicos de Discos, Pink Star e Matérias.</p><button class="primary" id="emptyAdd">＋ Adicionar Pokémon/Meta/Item</button></div>`;document.getElementById('emptyAdd').onclick=openCreateModal;return}
+  state.forEach((card,ci)=>{
+    const el=document.createElement('article');el.className='card'+(card.completed?' completed':'');el.style.setProperty('--tab',safeColor(card.color));
+    let cats='';
+    card.topics.forEach(topic=>{
+      const topicImgs=normalizeTopicImages(topic);
+      const imgs=topicImgs.length?`<div class="topic-images">${topicImgs.map(url=>`<img src="${esc(url)}" alt="" onerror="this.style.display='none'">`).join('')}</div>`:'';
+      const topicTitle=topic.name?`<span class="topic-title-text">${esc(topic.name)}</span>`:'';
+      cats+=`<div class="category" data-topic-card="${ci}" data-topic-id="${esc(topic.id)}">
+        <div class="cat-title">${imgs}${topicTitle}<div class="topic-tools"><button data-add-item="${ci}" data-topic="${esc(topic.id)}" title="Adicionar item neste tópico">＋</button><button data-edit-topic="${ci}" data-topic="${esc(topic.id)}" title="Editar tópico">✎</button></div></div>`;
+      if(topic.details)cats+=`<div class="topic-details">${esc(topic.details)}</div>`;
+      if(topic.mode==='shared50'){const total=sharedTotal(topic),remaining=Math.max(0,50-total);cats+=`<div class="shared-total">Total: <strong>${total}/50</strong> · faltam <strong>${remaining}</strong></div>`}
+      cats+=topic.items.length?topic.items.map((it,ii)=>renderItem(card,topic,ci,ii)).join(''):`<div class="empty">Nenhum item — use ＋ acima</div>`;
+      cats+='</div>';
+    });
+    const hasImage=!!card.image;
+    const heroCheck=card.completed&&card.kind==='pokemon'?'<div class="hero-done-check">✓</div>':'';
+    const hero=hasImage?`<div class="hero${card.kind==='pokemon'?'':' compact'}"><img src="${esc(card.image)}" alt="${esc(card.name)}" onerror="this.classList.add('broken');this.nextElementSibling.style.display='block'"><div class="image-error">Imagem não carregou.<br>Confira a URL.</div>${heroCheck}</div>`:`<div class="hero no-image"><div class="image-placeholder">Sem imagem</div>${heroCheck}</div>`;
+    el.innerHTML=`
+      <div class="type-badge">${kindLabel(card.kind)}</div>
+      <div class="card-tools">
+        <button class="tiny move-up" data-c="${ci}" title="Mover aba para cima" ${ci===0?'disabled':''}>↑</button>
+        <button class="tiny move-down" data-c="${ci}" title="Mover aba para baixo" ${ci===state.length-1?'disabled':''}>↓</button>
+        ${card.kind==='pokemon'?`<button class="tiny add-topic-top" data-add-topic="${ci}" title="Adicionar tópico">＋</button>`:''}
+        <button class="card-complete-check" data-complete="${ci}" title="${card.completed?'Marcar como não concluído':'Marcar como concluído'}">✓</button>
+        <button class="tiny card-settings" data-c="${ci}" title="Ajustes da aba">⚙</button>
+        <button class="tiny delete-card" data-c="${ci}" title="Excluir aba">✕</button>
+      </div>
+      ${hero}
+      <div class="name-row"><div class="tab-name" data-rename="${ci}" title="Clique para renomear">${esc(card.name)}</div><button class="rename-pencil" data-rename="${ci}" title="Renomear">✎</button></div>
+      ${card.details?`<div class="card-details">${esc(card.details)}</div>`:''}
+      ${card.kind==='pokemon'
+        ? (card.topics.length?`<div class="categories" style="--topic-count:${Math.max(1,card.topics.length)}">${cats}</div>`:`<div class="empty-topics">Nenhum tópico neste Pokémon.</div>`)
+        : `<div class="simple-goal${card.value>=card.max?' goal-done':''}">
+             <div class="simple-goal-label">Progresso</div>
+             <div class="progress"><input data-card-value="${ci}" type="number" min="0" value="${Math.max(0,+card.value||0)}"><span>/</span><input class="max-input" data-card-max="${ci}" type="number" min="1" value="${Math.max(1,+card.max||1)}"></div>
+             <div class="goal-check${card.value>=card.max?' show':''}">✓</div>
+           </div>`}`;
+    grid.appendChild(el);
+  });
+  bindRendered();
+}
+function bindRendered(){
+  document.querySelectorAll('[data-value]').forEach(inp=>inp.onchange=()=>{const ci=+inp.dataset.value,t=topicById(state[ci],inp.dataset.topic),ii=+inp.dataset.i;if(!t||!t.items[ii])return;let v=Math.max(0,+inp.value||0);if(t.mode==='fixed10')v=Math.min(10,v);if(t.mode==='shared50')v=Math.min(sharedAllowedMax(t,ii),v);t.items[ii].value=v;save();render()});
+  document.querySelectorAll('[data-max]').forEach(inp=>inp.onchange=()=>{const ci=+inp.dataset.max,t=topicById(state[ci],inp.dataset.topic),ii=+inp.dataset.i;if(!t||!t.items[ii])return;t.items[ii].max=Math.max(1,+inp.value||1);save();render()});
+  document.querySelectorAll('[data-card-value]').forEach(inp=>inp.onchange=()=>{const c=state[+inp.dataset.cardValue];if(!c)return;c.value=Math.min(Math.max(0,+inp.value||0),Math.max(1,+c.max||1));save();render()});
+  document.querySelectorAll('[data-card-max]').forEach(inp=>inp.onchange=()=>{const c=state[+inp.dataset.cardMax];if(!c)return;c.max=Math.max(1,+inp.value||1);c.value=Math.min(Math.max(0,+c.value||0),c.max);save();render()});
+  document.querySelectorAll('[data-edit-item]').forEach(btn=>btn.onclick=()=>openItemModal(+btn.dataset.editItem,btn.dataset.topic,+btn.dataset.i));
+  document.querySelectorAll('[data-remove-item]').forEach(btn=>btn.onclick=()=>{const ci=+btn.dataset.removeItem,t=topicById(state[ci],btn.dataset.topic),ii=+btn.dataset.i;if(!t)return;t.items.splice(ii,1);normalizeSharedTopic(t);save();render()});
+  document.querySelectorAll('[data-add-item]').forEach(btn=>btn.onclick=()=>openItemModal(+btn.dataset.addItem,btn.dataset.topic));
+  document.querySelectorAll('[data-edit-topic]').forEach(btn=>btn.onclick=()=>openTopicModal(+btn.dataset.editTopic,btn.dataset.topic));
+  document.querySelectorAll('[data-add-topic]').forEach(btn=>btn.onclick=()=>openTopicPicker(+btn.dataset.addTopic));
+  document.querySelectorAll('[data-complete]').forEach(btn=>btn.onclick=()=>{const i=+btn.dataset.complete;state[i].completed=!state[i].completed;save();render()});
+  document.querySelectorAll('.card-settings').forEach(btn=>btn.onclick=()=>openCardModal(+btn.dataset.c));
+  document.querySelectorAll('.delete-card').forEach(btn=>btn.onclick=()=>{const i=+btn.dataset.c;if(confirm(`Excluir a aba “${state[i].name}”?`)){state.splice(i,1);save();render()}});
+  document.querySelectorAll('.move-up').forEach(btn=>btn.onclick=()=>moveCard(+btn.dataset.c,-1));
+  document.querySelectorAll('.move-down').forEach(btn=>btn.onclick=()=>moveCard(+btn.dataset.c,1));
+  document.querySelectorAll('[data-rename]').forEach(el=>el.onclick=()=>startInlineRename(+el.dataset.rename));
+}
+function moveCard(index,dir){const to=index+dir;if(to<0||to>=state.length)return;[state[index],state[to]]=[state[to],state[index]];save();render();setTimeout(()=>document.querySelectorAll('.card')[to]?.scrollIntoView({behavior:'smooth',block:'center'}),30)}
+function startInlineRename(index){
+  const card=state[index];if(!card)return;const nameRow=document.querySelectorAll('.name-row')[index];if(!nameRow)return;
+  nameRow.innerHTML=`<input class="inline-name-input" value="${esc(card.name)}" aria-label="Novo nome da aba">`;
+  const input=nameRow.querySelector('input');input.focus();input.select();let finished=false;
+  const finish=()=>{if(finished)return;finished=true;const v=input.value.trim();if(v)card.name=v;save();render()};
+  input.onkeydown=e=>{if(e.key==='Enter')finish();if(e.key==='Escape'){finished=true;render()}};input.onblur=finish;
+}
+
+function presetTopic(which){const p=clone(PRESETS[which]||PRESETS.custom);p.id=uid('topic');p.items=p.items.map(it=>({...it,id:uid('item')}));return p}
+function renderCreateTopics(){const host=document.getElementById('createTopicDraft');host.innerHTML=createTopics.length?'':'<div class="empty">Nenhum tópico inicial.</div>';createTopics.forEach((t,i)=>{const d=document.createElement('div');d.className='draft-topic';d.innerHTML=`<span><strong>${esc(t.name||'(sem nome)')}</strong> · ${t.mode==='fixed10'?'Discos /10':t.mode==='shared50'?'Matérias total 50':'Meta individual'}</span><button type="button" data-draft-remove="${i}">×</button>`;host.appendChild(d)});host.querySelectorAll('[data-draft-remove]').forEach(b=>b.onclick=()=>{createTopics.splice(+b.dataset.draftRemove,1);renderCreateTopics()})}
+function setCreateKind(kind){createKind=['pokemon','meta','item'].includes(kind)?kind:'pokemon';document.getElementById('createKind').value=createKind;document.querySelectorAll('#kindChoice [data-kind]').forEach(b=>b.classList.toggle('active',b.dataset.kind===createKind));const isPokemon=createKind==='pokemon';document.getElementById('pokemonPresetArea').style.display=isPokemon?'block':'none';document.getElementById('simpleGoalCreate').style.display=isPokemon?'none':'block';document.getElementById('createName').placeholder=isPokemon?'Ex.: Alolan Ninetales':createKind==='meta'?'Ex.: Completar coleção':'Ex.: Conseguir item raro'}
+function openCreateModal(){
+  createTopics=[presetTopic('discos'),presetTopic('pink'),presetTopic('materias')];setCreateKind('pokemon');renderCreateTopics();
+  document.getElementById('createName').value='';document.getElementById('createImage').value='';document.getElementById('createDetails').value='';document.getElementById('createColor').value='#4c88aa';document.getElementById('createGoalMax').value='1';document.getElementById('createModal').classList.add('open');setTimeout(()=>document.getElementById('createName').focus(),50)
+}
+document.querySelectorAll('#kindChoice [data-kind]').forEach(b=>b.onclick=()=>setCreateKind(b.dataset.kind));
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{createTopics.push(presetTopic(b.dataset.preset));renderCreateTopics()});
+document.getElementById('createCancel').onclick=()=>document.getElementById('createModal').classList.remove('open');
+document.getElementById('createSave').onclick=()=>{
+  const name=document.getElementById('createName').value.trim();if(!name){alert('Digite o nome da aba.');return}
+  const kind=createKind;const topics=kind==='pokemon'?createTopics.map((t,i)=>normalizeTopic(t,i,'pokemon')):[];
+  const max=kind==='pokemon'?1:Math.max(1,+document.getElementById('createGoalMax').value||1);state.push({id:uid('tab'),kind,name,image:document.getElementById('createImage').value.trim(),details:document.getElementById('createDetails').value.trim(),color:safeColor(document.getElementById('createColor').value),completed:false,value:0,max,topics});save();document.getElementById('createModal').classList.remove('open');render();
+};
+
+function refreshCardKindFields(){const k=document.getElementById('cardKind').value;document.getElementById('simpleGoalEdit').style.display=k==='pokemon'?'none':'block'}
+function openCardModal(index){editingCard=index;const c=state[index];document.getElementById('cardModalTitle').textContent=`Ajustes — ${c.name}`;document.getElementById('cardKind').value=c.kind;document.getElementById('cardName').value=c.name;document.getElementById('cardImage').value=c.image;document.getElementById('cardDetails').value=c.details||'';document.getElementById('cardColor').value=safeColor(c.color);document.getElementById('cardGoalMax').value=Math.max(1,+c.max||1);refreshCardKindFields();document.getElementById('cardModal').classList.add('open')}
+document.getElementById('cardKind').onchange=refreshCardKindFields;
+document.getElementById('cardCancel').onclick=()=>document.getElementById('cardModal').classList.remove('open');
+document.getElementById('cardSave').onclick=()=>{const c=state[editingCard];if(!c)return;const name=document.getElementById('cardName').value.trim();if(!name){alert('Digite um nome.');return}const oldKind=c.kind;c.kind=document.getElementById('cardKind').value;c.name=name;c.image=document.getElementById('cardImage').value.trim();c.details=document.getElementById('cardDetails').value.trim();c.color=safeColor(document.getElementById('cardColor').value);if(c.kind!=='pokemon'){c.topics=[];c.max=Math.max(1,+document.getElementById('cardGoalMax').value||1);c.value=Math.min(Math.max(0,+c.value||0),c.max)}else if(oldKind!=='pokemon'){c.topics=[]}save();document.getElementById('cardModal').classList.remove('open');render()};
+
+function openTopicPicker(ci){
+  const card=state[ci];if(!card||card.kind!=='pokemon')return;
+  topicPickerCard=ci;document.getElementById('topicPickerModal').classList.add('open');
+}
+document.getElementById('topicPickerCancel').onclick=()=>document.getElementById('topicPickerModal').classList.remove('open');
+document.querySelectorAll('[data-topic-preset-choice]').forEach(btn=>btn.onclick=()=>{
+  const ci=topicPickerCard,key=btn.dataset.topicPresetChoice;document.getElementById('topicPickerModal').classList.remove('open');openTopicModal(ci,null,key);
+});
+
+function openTopicModal(ci,topicId=null,presetKey=null){
+  editingTopicCard=ci;editingTopicId=topicId;const card=state[ci];if(!card||card.kind!=='pokemon')return;const topic=topicId?topicById(card,topicId):null;const preset=!topic&&presetKey?PRESETS[presetKey]:null;
+  document.getElementById('topicModalTitle').textContent=topic?'Editar tópico':'Adicionar tópico';document.getElementById('topicName').value=topic?.name||preset?.name||'';document.getElementById('topicDetails').value=topic?.details||preset?.details||'';document.getElementById('topicImages').value=normalizeTopicImages(topic||preset||{}).join('\n');document.getElementById('topicMode').value=topic?.mode||preset?.mode||'custom';document.getElementById('pokemonTopicModeArea').style.display='block';document.getElementById('topicDelete').style.display=topic?'inline-block':'none';document.getElementById('topicModal').classList.add('open');setTimeout(()=>document.getElementById('topicName').focus(),50)
+}
+document.getElementById('topicCancel').onclick=()=>document.getElementById('topicModal').classList.remove('open');
+document.getElementById('topicDelete').onclick=()=>{const card=state[editingTopicCard],idx=card?.topics.findIndex(t=>t.id===editingTopicId);if(idx<0)return;const topicName=card.topics[idx].name?` “${card.topics[idx].name}”`:'';if(confirm(`Excluir o tópico${topicName}?`)){card.topics.splice(idx,1);save();document.getElementById('topicModal').classList.remove('open');render()}};
+document.getElementById('topicSave').onclick=()=>{
+  const card=state[editingTopicCard];if(!card)return;const name=document.getElementById('topicName').value.trim();
+  const mode=card.kind==='pokemon'?document.getElementById('topicMode').value:'custom';
+  if(editingTopicId){const t=topicById(card,editingTopicId);if(!t)return;t.name=name;t.details=document.getElementById('topicDetails').value.trim();t.images=topicImagesFromText(document.getElementById('topicImages').value);t.image=t.images[0]||'';t.mode=mode;t.items=t.items.map(it=>normalizeItem(it,mode));normalizeSharedTopic(t)}
+  else {const images=topicImagesFromText(document.getElementById('topicImages').value);card.topics.push(normalizeTopic({id:uid('topic'),name,details:document.getElementById('topicDetails').value.trim(),images,image:images[0]||'',mode,items:[]},card.topics.length,card.kind));}
+  save();document.getElementById('topicModal').classList.remove('open');render();
+};
+
+function openItemModal(ci,topicId,itemIndex=null){
+  addingItemCard=ci;addingItemTopic=topicId;editingItemIndex=Number.isInteger(itemIndex)?itemIndex:null;
+  const card=state[ci],topic=topicById(card,topicId);if(!topic)return;const it=editingItemIndex===null?null:topic.items[editingItemIndex];
+  document.getElementById('itemModalTitle').textContent=it?`Editar item — ${topic.name||'Tópico'}`:`Adicionar item — ${topic.name||'Tópico'}`;
+  document.getElementById('itemName').value=it?.name||'';document.getElementById('itemDetails').value=it?.details||'';
+  const row=document.getElementById('itemGoalRow'),rule=document.getElementById('itemRule');if(topic.mode==='fixed10'){row.style.display='none';rule.textContent='Meta fixa: /10.'}else if(topic.mode==='shared50'){row.style.display='none';rule.textContent=`Meta compartilhada: /50. Restam ${Math.max(0,50-sharedTotal(topic)+(it?.value||0))}.`}else{row.style.display='block';document.getElementById('itemGoal').value=Math.max(1,+it?.max||10);rule.textContent='Defina a meta deste item.'}
+  document.getElementById('itemSave').textContent=it?'Salvar alterações':'Adicionar item';document.getElementById('itemModal').classList.add('open');setTimeout(()=>document.getElementById('itemName').focus(),50)
+}
+document.getElementById('itemCancel').onclick=()=>document.getElementById('itemModal').classList.remove('open');
+document.getElementById('itemSave').onclick=()=>{const card=state[addingItemCard],topic=topicById(card,addingItemTopic);if(!topic)return;const name=document.getElementById('itemName').value.trim(),details=document.getElementById('itemDetails').value.trim();const max=topic.mode==='fixed10'?10:topic.mode==='shared50'?50:Math.max(1,+document.getElementById('itemGoal').value||10);if(editingItemIndex===null){topic.items.push({id:uid('item'),name,details,value:0,max})}else{const it=topic.items[editingItemIndex];if(!it)return;it.name=name;it.details=details;it.max=max;if(topic.mode==='fixed10')it.value=Math.min(10,Math.max(0,+it.value||0));if(topic.mode==='custom')it.value=Math.min(max,Math.max(0,+it.value||0))}normalizeSharedTopic(topic);save();document.getElementById('itemModal').classList.remove('open');editingItemIndex=null;render()};
+
+['createModal','cardModal','topicPickerModal','topicModal','itemModal'].forEach(id=>document.getElementById(id).onclick=e=>{if(e.target.id===id)e.currentTarget.classList.remove('open')});
+document.getElementById('addGoalBtn').onclick=openCreateModal;
+function downloadUpdatedHtml(){const root=document.documentElement.cloneNode(true);const embedded=root.querySelector('#embeddedState');if(embedded)embedded.textContent=JSON.stringify(state).replace(/</g,'\\u003c');const status=root.querySelector('#saveStatus');if(status){status.textContent='Alterações salvas automaticamente neste navegador.';status.classList.add('saved')}const html='<!doctype html>\n'+root.outerHTML;const blob=new Blob([html],{type:'text/html;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='metas hzy.html';document.body.appendChild(a);a.click();const href=a.href;a.remove();setTimeout(()=>URL.revokeObjectURL(href),1200);setSaveStatus('Arquivo atualizado salvo. Ele já contém suas alterações.',true)}
+document.getElementById('saveHtmlBtn').onclick=downloadUpdatedHtml;
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Restaurar o tracker e apagar todas as abas e o progresso salvo?')){state=[];save();render()}};
+document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='metas-hzy-progresso.json';a.click();const href=a.href;setTimeout(()=>URL.revokeObjectURL(href),1000)};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x))throw 0;state=x.map(normalizeCard).filter(Boolean);save();render()}catch(err){alert('Arquivo inválido.')}};r.readAsText(f)};
+render();
+</script>
+</body>
+</html>
